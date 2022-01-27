@@ -1,4 +1,4 @@
-SRC=refcard-python.tex 
+SRC=refcard-oop.tex 
 
 all: $(SRC:.tex=.pdf) preview.png
 
@@ -16,7 +16,7 @@ underlay.pdf: underlay.tex
 preview.pdf: $(SRC:.tex=.pdf) underlay.pdf
 	qpdf $< --underlay underlay.pdf -- $@
 
-preview.png: $(SRC)
+preview.png: $(SRC:.tex=.pdf)
 	gs -dSAFER -r150 -sDEVICE=pngalpha -o $@ $<
 
 clean:
