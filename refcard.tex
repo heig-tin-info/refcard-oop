@@ -1,0 +1,197 @@
+\documentclass{article}
+
+\usepackage[a4paper, landscape, margin=1cm]{geometry}
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[fontsize=6.5pt]{scrextend}
+\usepackage[T1]{fontenc}
+\usepackage{multicol}
+\usepackage{tabularx,booktabs}
+\usepackage{sectsty}
+\usepackage{lmodern}
+\usepackage{stix}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{titlesec}
+\usepackage{fullpage}
+\usepackage{tikz-uml}
+\usepackage{makecell}
+\setcellgapes{3pt}
+\let\oldmakecell\makecell
+\renewcommand\makecell[2][cc]{\renewcommand\cellalign{#1}\oldmakecell{#2}}
+\tikzumlset{
+    fill class=white,
+    fill template=white,
+    fill package=white,
+    fill note=white
+}
+
+\sloppy
+\hyphenpenalty 10000000
+
+\input{revision}
+
+\setlength{\parskip}{0.2em}
+\setlength{\parindent}{0em}
+
+% Highlight configuration for C programming language
+\lstset{
+  language=python,
+  breaklines=true,
+  keywordstyle=\bfseries\color{black},
+  basicstyle=\ttfamily\color{black},
+  emphstyle={\em \color{gray}},
+  emph={expr, type, NAME, ptr, name, expr, value, filename, label, member, type},
+  mathescape=true,
+  keepspaces=true,
+  showspaces=false,
+  showtabs=true,
+  tabsize=3,
+  columns=fullflexible,
+  escapeinside={(*}{*)}
+}
+
+% Configuration
+\renewcommand{\familydefault}{\sfdefault}
+
+\sectionfont{\fontsize{12}{15}\selectfont}
+\subsectionfont{\fontsize{10}{12}\selectfont}
+
+\allsectionsfont{\sffamily\underline}
+
+% No pages numbering
+\pagenumbering{gobble}
+
+% Titles and paragraphs more compact
+\titlespacing*{\section}{0pt}{0pt}{0pt}
+\titlespacing*{\subsection}{0pt}{0pt}{0pt}
+
+\newlength\mybaselinestretch
+\mybaselinestretch=0pt plus 0.02pt\relax
+\addtolength{\baselineskip}{\mybaselinestretch}
+
+\setlength\parindent{0pt}
+\setlength\tabcolsep{1.5pt}
+\setlength{\columnseprule}{0.4pt}
+
+% Macros
+\newcommand{\tab}{\hspace{2em}}
+\newcommand{\etc}{\small \ldots}
+\newcommand{\any}{$\hzigzag$~}
+\newcommand{\spc}{$\mathvisiblespace$}
+\newcommand{\cd}{\lstinline}
+
+\begin{document}
+
+\begin{multicols*}{3}
+
+  \begin{tabularx}{\columnwidth}{@{}lX}
+    \raisebox{-\totalheight}{\includegraphics[width=1cm]{assets/heig-vd-black.pdf}} &
+\begin{center}
+  {\Large \bf Carte de référence Programmation Objet} \\
+  version \revision \ -- \revisiondate \\
+\end{center}
+\end{tabularx}
+{
+\scriptsize
+Cette carte de référence est une liste non exhaustive du paradigme Objet et de ses notions fondamentales
+}
+
+\hrule
+
+\section*{S.O.L.I.D.}
+\begin{description}%
+\item[S] \emph{Responsabilité unique}. Le principe de responsabilité unique stipule qu'une classe ne devrait avoir qu'\textbf{une seule raison de changer} et \textbf{une seule responsabilité}.
+\item[O] \emph{Ouvert/Fermé}. Une entité applicative (classe, fonction, module ...) doit être fermée à la modification directe mais ouverte à l'extension
+\item[L] \emph{Substitution de Liskov}. Une instance de type T doit pouvoir être remplacée par une instance de type G, tel que G sous-type de T, sans que cela ne modifie la cohérence du programme
+\item[I] \emph{Ségrégation des interfaces}. Préférer plusieurs interfaces spécifiques pour chaque client plutôt qu'une seule interface générale
+\item[D] \emph{Inversion des dépendances}. Il faut dépendre des abstractions, pas des implémentations.
+\end{description}
+
+\section*{Concepts objets}
+\begin{description}
+\item[Objets] Les \emph{Objets} sont des instances de classes résidentes en mémoire. Ils possèdent un constructeur et un destructeur.
+\item[Class] Les classes sont des \emph{Modèles} d'\emph{Objets}. Ils sont définis par des attributs et des méthodes. 
+\item[Héritage] Les classes peuvent hériter d'une autre classe et ainsi se spécialiser.
+\item[Polymorphisme] Une classe parente peut être substituée par une classe enfant et ainsi le comportement de l'objet est généralisé.
+\item[Abstraction] Offre une abstraction des détails d'implémentation par la description d'interfaces et de comportements. 
+\item[Encapsulation] Permet de regrouper les données avec des routines qui en permettent la manipulation. Elle permet de modifier les structures de données internes sans modifier l'interface de celle-ci. 
+\end{description}
+\section*{Relations}
+\begin{tabularx}{\columnwidth}{lX}
+\begin{tikzpicture}
+\umlemptyclass{A}
+\umlemptyclass[x=3]{B}
+\umldep{A}{B}
+\end{tikzpicture} & Dépendence \\
+\begin{tikzpicture}
+\umlemptyclass{A}
+\umlemptyclass[x=3]{B}
+\umlassoc{A}{B}
+\end{tikzpicture} & Association \\ 
+\begin{tikzpicture}
+\umlemptyclass{A}
+\umlemptyclass[x=3]{B}
+\umluniassoc{A}{B}
+\end{tikzpicture} & Association Unique \\ 
+\begin{tikzpicture}
+\umlemptyclass{A}
+\umlemptyclass[x=3]{B}
+\umlaggreg{A}{B}
+\end{tikzpicture} & Aggrégation. La classe A contient une collection de B. Lorsque A est détruite les instances de B ne sont pas détruites. \\ 
+\begin{tikzpicture}
+\umlemptyclass{A}
+\umlemptyclass[x=3]{B}
+\umlcompo{A}{B}
+\end{tikzpicture} & Composition. La classe A contient une collection de B. Lorsque A est détruite les instances de B sont également détruites. \\
+\begin{tikzpicture}
+\umlemptyclass{A}
+\umlemptyclass[x=3]{B}
+\umlinherit{A}{B}
+\end{tikzpicture} & Héritage. La classe A hérite de B. On dit que A et un B.\\
+\begin{tikzpicture}
+\umlemptyclass{A}
+\umlemptyclass[x=3]{B}
+\umlimpl{A}{B}
+\end{tikzpicture} & Implémentation/Réalisation \\
+\end{tabularx}
+
+
+\section*{Modèle de classes}
+\begin{center}
+\resizebox{\columnwidth}{!}{%
+\begin{tikzpicture}
+\begin{umlpackage}{p}
+\begin{umlpackage}{sp1}
+\umlclass[template=T]{A}{
+  n : uint \\ t : float
+}{}
+\umlclass[y=-3]{B}{
+  d : double
+}{
+  \umlvirt{setB(b : B) : void} \\ getB() : B}
+\end{umlpackage}
+\begin{umlpackage}[x=10,y=-6]{sp2}
+\umlinterface{C}{
+  n : uint \\ s : string
+}{}
+\end{umlpackage}
+\umlclass[x=2,y=-10]{D}{
+  n : uint
+  }{}
+\end{umlpackage}
+
+\umlassoc[geometry=-|-, arg1=tata, mult1=*, pos1=0.3, arg2=toto, mult2=1, pos2=2.9, align2=left]{C}{B}
+\umlunicompo[geometry=-|, arg=titi, mult=*, pos=1.7, stereo=vector]{D}{C}
+\umlimport[geometry=|-, anchors=90 and 50, name=import]{sp2}{sp1}
+\umlaggreg[arg=tutu, mult=1, pos=0.8, angle1=30, angle2=60, loopsize=2cm]{D}{D}
+\umlinherit[geometry=-|]{D}{B}
+\umlnote[x=2.5,y=-6, width=3cm]{B}{Je suis une note qui concerne la classe B}
+\umlnote[x=7.5,y=-2]{import-2}{Je suis une note qui concerne la relation d'import}
+\end{tikzpicture}
+}
+\end{center}
+
+\end{multicols*}
+\end{document}
