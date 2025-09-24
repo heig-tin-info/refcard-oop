@@ -39,9 +39,9 @@
 \setlength{\parskip}{0.2em}
 \setlength{\parindent}{0em}
 
-% Highlight configuration for C programming language
+% Highlight configuration for C++ programming language
 \lstset{
-  language=python,
+  language=C++,
   breaklines=true,
   keywordstyle=\bfseries\color{black},
   basicstyle=\ttfamily\color{black},
@@ -93,7 +93,7 @@
   \begin{tabularx}{\columnwidth}{@{}lX}
     \raisebox{-\totalheight}{\includegraphics[width=1cm]{assets/heig-vd-black.pdf}} &
 \begin{center}
-  {\Large \bf Carte de référence Programmation Objet} \\
+  {\Large \bf Carte de référence Programmation Objet C++20} \\
   version \revision \ -- \revisiondate \\
 \end{center}
 \end{tabularx}
@@ -122,6 +122,45 @@ Cette carte de référence est une liste non exhaustive du paradigme Objet et de
 \item[Abstraction] Offre une abstraction des détails d'implémentation par la description d'interfaces et de comportements. 
 \item[Encapsulation] Permet de regrouper les données avec des routines qui en permettent la manipulation. Elle permet de modifier les structures de données internes sans modifier l'interface de celle-ci. 
 \end{description}
+
+\section*{Modificateurs d'accès}
+\begin{tabularx}{\columnwidth}{lX}
+\textbf{public} & Accessible depuis l'extérieur de la classe \\
+\textbf{private} & Accessible uniquement depuis la classe elle-même \\
+\textbf{protected} & Accessible depuis la classe et ses classes dérivées \\
+\end{tabularx}
+
+\section*{Méthodes spéciales}
+\begin{description}
+\item[Constructeur] Initialise un objet lors de sa création
+\item[Destructeur] Nettoie les ressources lors de la destruction (\texttt{\textasciitilde{}})
+\item[virtual] Permet le polymorphisme dynamique
+\item[override] Indique qu'une méthode redéfinit une méthode virtuelle
+\item[final] Empêche la redéfinition d'une méthode ou l'héritage d'une classe
+\item[const] Méthode qui ne modifie pas l'état de l'objet
+\end{description}
+
+\section*{Syntaxe C++ de base}
+\begin{lstlisting}[language=C++]
+class Animal {
+private:
+    string nom;
+protected:
+    int age;
+public:
+    Animal(string n) : nom(n) {}
+    virtual ~Animal() {}
+    virtual void crier() const = 0; // pure virtual
+    string getNom() const { return nom; }
+};
+
+class Chat : public Animal {
+public:
+    Chat(string n) : Animal(n) {}
+    void crier() const override { cout << "Miaou"; }
+};
+\end{lstlisting}
+
 \section*{Relations}
 \begin{tabularx}{\columnwidth}{lX}
 \begin{tikzpicture}
@@ -160,6 +199,21 @@ Cette carte de référence est une liste non exhaustive du paradigme Objet et de
 \umlimpl{A}{B}
 \end{tikzpicture} & Implémentation/Réalisation \\
 \end{tabularx}
+
+\section*{Principes modernes}
+\begin{description}
+\item[RAII] Resource Acquisition Is Initialization - acquérir les ressources dans le constructeur, les libérer dans le destructeur
+\item[Rule of 3/5/0] Si une classe définit destructeur, constructeur de copie ou opérateur d'assignation, elle doit probablement définir les trois (ou cinq avec move)
+\item[Has-a vs Is-a] Composition (Has-a) souvent préférable à l'héritage (Is-a) pour la flexibilité
+\item[Smart pointers] \texttt{unique\_ptr}, \texttt{shared\_ptr} pour la gestion automatique de la mémoire
+\end{description}
+
+\section*{Design Patterns essentiels}
+\begin{description}
+\item[Singleton] Une seule instance de classe, accès global contrôlé
+\item[Factory] Création d'objets sans exposer la logique d'instanciation
+\item[Observer] Notification automatique des changements d'état
+\end{description}
 
 
 \section*{Modèle de classes}
