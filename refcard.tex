@@ -1,22 +1,21 @@
-\documentclass{article}
-
-\usepackage[a4paper, landscape, margin=1cm]{geometry}
-\usepackage{fontspec}
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper,landscape,margin=5mm]{geometry}
 \usepackage[french]{babel}
-\usepackage[fontsize=6.5pt]{scrextend}
-\usepackage[T1]{fontenc}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{fontspec}
 \usepackage{multicol}
 \usepackage{tabularx,booktabs}
-\usepackage{sectsty}
-\usepackage{lmodern}
+\usepackage{graphicx}
 \usepackage{stix}
 \usepackage{listings}
-\usepackage[dvipsnames]{xcolor}
 \usepackage{multirow}
 \usepackage{titlesec}
-\usepackage{fullpage}
+% \usepackage{fullpage}
 \usepackage{tikz-uml}
 \usepackage{makecell}
+
+\input{revision}
+
 \setcellgapes{3pt}
 \let\oldmakecell\makecell
 \renewcommand\makecell[2][cc]{\renewcommand\cellalign{#1}\oldmakecell{#2}}
@@ -34,7 +33,6 @@
   \pagecolor{Lavender!60}
 \fi
 
-\input{revision}
 
 \setlength{\parskip}{0.2em}
 \setlength{\parindent}{0em}
@@ -97,41 +95,70 @@
   version \revision \ -- \revisiondate \\
 \end{center}
 \end{tabularx}
-{
-\scriptsize
+
 Cette carte de référence est une liste non exhaustive du paradigme Objet et de ses notions fondamentales
-}
+
 
 \hrule
 
 \section*{S.O.L.I.D.}
 \begin{description}%
 \item[S] \emph{Responsabilité unique}. Le principe de responsabilité unique stipule qu'une classe ne devrait avoir qu'\textbf{une seule raison de changer} et \textbf{une seule responsabilité}.
-\item[O] \emph{Ouvert/Fermé}. Une entité applicative (classe, fonction, module ...) doit être fermée à la modification directe mais ouverte à l'extension
-\item[L] \emph{Substitution de Liskov}. Une instance de type T doit pouvoir être remplacée par une instance de type G, tel que G sous-type de T, sans que cela ne modifie la cohérence du programme
+\item[O] \emph{Ouvert/Fermé}. Une entité applicative doit être fermée à la modification directe mais ouverte à l'extension
+\item[L] \emph{Substitution de Liskov}. Une instance de type T doit pouvoir être remplacée par une instance de type G, tel que G sous-type de T, sans rupture de la cohérence du programme
 \item[I] \emph{Ségrégation des interfaces}. Préférer plusieurs interfaces spécifiques pour chaque client plutôt qu'une seule interface générale
 \item[D] \emph{Inversion des dépendances}. Il faut dépendre des abstractions, pas des implémentations.
 \end{description}
 
-\section*{Concepts objets}
+\section*{RAII}
+Le principe RAII (\emph{Resource Acquisition Is Initialization}) consiste à lier la durée de vie des ressources (mémoire, fichiers, connexions réseau, etc.) à la durée de vie des objets. Ainsi, les ressources sont acquises lors de la création de l'objet (dans le constructeur) sont libérées lors de la destruction de l'objet (dans le destructeur).
+
+\section*{Paradigme orienté-objet}
 \begin{description}
-\item[Objets] Les \emph{Objets} sont des instances de classes résidentes en mémoire. Ils possèdent un constructeur et un destructeur.
-\item[Classe] Les classes sont des \emph{Modèles} d'\emph{Objets}. Ils sont définis par des attributs et des méthodes. 
-\item[Héritage] Les classes peuvent hériter d'une autre classe et ainsi se spécialiser.
+\item[Objets] Les sont des instances de classes résidentes en mémoire. Ils possèdent un constructeur, un destructeur et véhiculent des données.
+\item[Classe] Les classes sont des \emph{Modèles} d'\emph{Objets}. Ils sont définis par des attributs et des méthodes.
+\item[Héritage] Les classes peuvent hériter d'une autre classe et ainsi se spécialiser (en respectant le principe de substitution de Liskov).
 \item[Polymorphisme] Une classe parente peut être substituée par une classe enfant et ainsi le comportement de l'objet est généralisé.
-\item[Abstraction] Offre une abstraction des détails d'implémentation par la description d'interfaces et de comportements. 
-\item[Encapsulation] Permet de regrouper les données avec des routines qui en permettent la manipulation. Elle permet de modifier les structures de données internes sans modifier l'interface de celle-ci.
-\item[Interface] Contrat définissant un ensemble de méthodes qu'une classe doit implémenter.
+\item[Abstraction] Offre une abstraction des détails d'implémentation par la description d'interfaces et de comportements.
+\item[Encapsulation] Permet de regrouper les données avec des routines qui en permettent la manipulation. Elle permet de modifier des données sans modifier l'interface de celle-ci.
+\item[Interface] Contrat définissant un ensemble de méthodes qu'une classe doit implémenter. C'est un contrat.
 \item[Classe abstraite] Classe qui ne peut être instanciée, contient au moins une méthode virtuelle pure.
 \item[Cohésion] Mesure à quel point les éléments d'une classe collaborent pour une responsabilité unique.
 \item[Couplage] Degré d'interdépendance entre les classes (faible couplage souhaitable).
 \end{description}
 
+\section*{Héritage v.s. Composition}
+Exemple de composition (Has-a) et d'héritage (Is-a):
+\begin{lstlisting}[language=C++]
+class Moteur {
+public:
+    void demarrer() { /* ... */ }
+    void arreter() { /* ... */ }
+};
+class Voiture {
+private:
+    Moteur moteur; // Composition: Voiture a un Moteur
+public:
+    void demarrer() { moteur.demarrer(); }
+    void arreter() { moteur.arreter(); }
+};
+
+class Vehicule {
+public:
+    virtual void demarrer() = 0;
+    virtual void arreter() = 0;
+};
+class Moto : public Vehicule { // Héritage: Moto est un Vehicule
+public:
+    void demarrer() override { /* ... */ }
+    void arreter() override { /* ... */ }
+};
+\end{lstlisting}
 \section*{Modificateurs d'accès}
 \begin{tabularx}{\columnwidth}{lX}
 \textbf{public} & Accessible depuis l'extérieur de la classe \\
 \textbf{private} & Accessible uniquement depuis la classe elle-même \\
-\textbf{protected} & Accessible depuis la classe et ses classes dérivées \\
+\textbf{protected} & Accessible depuis la classe et ses classes dérivées
 \end{tabularx}
 
 \section*{Méthodes et concepts spéciaux}
@@ -160,19 +187,16 @@ Cette carte de référence est une liste non exhaustive du paradigme Objet et de
 \item[Contravariance] Paramètre plus général dans classe dérivée
 \end{description}
 
-\section*{Syntaxe C++ de base}
+\section*{Interface}
 \begin{lstlisting}[language=C++]
-// Interface pure
-class IAnimal {
+class IAnimal { // Interface pure
 public:
     virtual ~IAnimal() = default;
     virtual void crier() const = 0;
     virtual void manger() = 0;
 };
 
-// Classe abstraite
-class Animal : public IAnimal {
-private:
+class Animal : public IAnimal { // Classe abstraite
     string nom;
 protected:
     int age;
@@ -180,29 +204,28 @@ public:
     Animal(string n) : nom(n), age(0) {}
     virtual ~Animal() {}
     string getNom() const { return nom; }
-    // Surcharge operateur
     friend ostream& operator<<(ostream& os, const Animal& a);
 };
-
-// Template de classe
-template<typename T>
-class Container {
-private:
-    vector<T> items;
-public:
-    void add(const T& item) { items.push_back(item); }
-    T& get(size_t index) { return items[index]; }
-};
-
-class Chat : public Animal {
-public:
-    Chat(string n) : Animal(n) {}
-    void crier() const override { cout << "Miaou"; }
-    void manger() override { cout << "Croquettes"; }
-};
 \end{lstlisting}
+% // Template de classe
+% template<typename T>
+% class Container {
+% private:
+%     vector<T> items;
+% public:
+%     void add(const T& item) { items.push_back(item); }
+%     T& get(size_t index) { return items[index]; }
+% };
 
-\section*{Relations}
+% class Chat : public Animal {
+% public:
+%     Chat(string n) : Animal(n) {}
+%     void crier() const override { cout << "Miaou"; }
+%     void manger() override { cout << "Croquettes"; }
+% };
+% \end{lstlisting}
+
+\section*{Relations UML}
 \begin{tabularx}{\columnwidth}{lX}
 \begin{tikzpicture}
 \umlemptyclass{A}
@@ -213,17 +236,17 @@ public:
 \umlemptyclass{A}
 \umlemptyclass[x=3]{B}
 \umlassoc{A}{B}
-\end{tikzpicture} & Association \\ 
+\end{tikzpicture} & Association \\
 \begin{tikzpicture}
 \umlemptyclass{A}
 \umlemptyclass[x=3]{B}
 \umluniassoc{A}{B}
-\end{tikzpicture} & Association Unique \\ 
+\end{tikzpicture} & Association Unique \\
 \begin{tikzpicture}
 \umlemptyclass{A}
 \umlemptyclass[x=3]{B}
 \umlaggreg{A}{B}
-\end{tikzpicture} & Aggrégation. La classe A contient une collection de B. Lorsque A est détruite les instances de B ne sont pas détruites. \\ 
+\end{tikzpicture} & Aggrégation. La classe A contient une collection de B. Lorsque A est détruite les instances de B ne sont pas détruites. \\
 \begin{tikzpicture}
 \umlemptyclass{A}
 \umlemptyclass[x=3]{B}
@@ -246,7 +269,6 @@ public:
 \item[Exception] Objet lancé en cas d'erreur, interrompt l'exécution normale
 \item[try-catch] Bloc de gestion des exceptions
 \item[throw] Lance une exception
-\item[RAII] Resource Acquisition Is Initialization - gestion automatique des ressources
 \item[std::exception] Classe de base pour les exceptions standard
 \item[Exception safety] Garanties sur l'état des objets en cas d'exception
 \end{description}
@@ -297,40 +319,84 @@ public:
 \item[Code coverage] Mesure du pourcentage de code testé
 \end{description}
 
-\section*{Modèle de classes}
-\begin{center}
-\resizebox{\columnwidth}{!}{%
-\begin{tikzpicture}
-\begin{umlpackage}{p}
-\begin{umlpackage}{sp1}
-\umlclass[template=T]{A}{
-  n : uint \\ t : float
-}{}
-\umlclass[y=-3]{B}{
-  d : double
-}{
-  \umlvirt{setB(b : B) : void} \\ getB() : B}
-\end{umlpackage}
-\begin{umlpackage}[x=10,y=-6]{sp2}
-\umlinterface{C}{
-  n : uint \\ s : string
-}{}
-\end{umlpackage}
-\umlclass[x=2,y=-10]{D}{
-  n : uint
-  }{}
-\end{umlpackage}
+\section*{SFINAE}
+SFINAE (Substitution Failure Is Not An Error) est un principe en C++ qui permet de sélectionner des surcharges de fonctions ou des spécialisations de templates en fonction de la validité des types substitués. Si la substitution d'un type dans une expression de template échoue, cela n'est pas considéré comme une erreur de compilation, mais plutôt comme une indication que cette surcharge ou spécialisation n'est pas applicable. Cela permet de créer des fonctions ou des classes génériques qui s'adaptent automatiquement aux types fournis, en excluant les options non valides.
 
-\umlassoc[geometry=-|-, arg1=tata, mult1=*, pos1=0.3, arg2=toto, mult2=1, pos2=2.9, align2=left]{C}{B}
-\umlunicompo[geometry=-|, arg=titi, mult=*, pos=1.7, stereo=vector]{D}{C}
-\umlimport[geometry=|-, anchors=90 and 50, name=import]{sp2}{sp1}
-\umlaggreg[arg=tutu, mult=1, pos=0.8, angle1=30, angle2=60, loopsize=2cm]{D}{D}
-\umlinherit[geometry=-|]{D}{B}
-\umlnote[x=2.5,y=-6, width=3cm]{B}{Je suis une note qui concerne la classe B}
-\umlnote[x=7.5,y=-2]{import-2}{Je suis une note qui concerne la relation d'import}
-\end{tikzpicture}
+Exemple...
+
+\section*{CRTP}
+Le CRTP (Curiously Recurring Template Pattern) est un idiome de programmation en C++ qui utilise des templates pour permettre à une classe dérivée de référencer sa propre classe de base.
+
+\begin{lstlisting}[language=C++]
+template <typename Derived>
+class Base {
+public:
+    void interface() {
+        static_cast<Derived*>(this)->implementation();
+    }
+    void implementation() { // Comportement par défaut}
+};
+class Derived : public Base<Derived> {
+public:
+    void implementation() { // Comportement spécifique }
+};
+\end{lstlisting}
+
+\section*{PIMPLE}
+Le pattern PIMPLE (Private Implementation) est une technique de conception en C++ qui consiste à séparer l'interface publique d'une classe de son implémentation privée.
+
+\begin{lstlisting}[language=C++]
+// Fichier .h
+class MyClass {
+  class Impl; // Déclaration anticipée de la classe d'implémentation
+  Impl* pImpl; // Pointeur vers l'implémentation privée
+public:
+  void publicMethod();
+};
+// Fichier .cpp
+class MyClass::Impl {
+public:
+  void privateMethod() { /* ... */ }
+};
+void MyClass::publicMethod() {
+  pImpl->privateMethod(); // Utilisation de la méthode privée
 }
-\end{center}
+\end{lstlisting}
+
+% \section*{Modèle de classes}
+% \begin{center}
+% \resizebox{\columnwidth}{!}{%
+% \begin{tikzpicture}
+% \begin{umlpackage}{p}
+% \begin{umlpackage}{sp1}
+% \umlclass[template=T]{A}{
+%   n : uint \\ t : float
+% }{}
+% \umlclass[y=-3]{B}{
+%   d : double
+% }{
+%   \umlvirt{setB(b : B) : void} \\ getB() : B}
+% \end{umlpackage}
+% \begin{umlpackage}[x=10,y=-6]{sp2}
+% \umlinterface{C}{
+%   n : uint \\ s : string
+% }{}
+% \end{umlpackage}
+% \umlclass[x=2,y=-10]{D}{
+%   n : uint
+%   }{}
+% \end{umlpackage}
+
+% \umlassoc[geometry=-|-, arg1=tata, mult1=*, pos1=0.3, arg2=toto, mult2=1, pos2=2.9, align2=left]{C}{B}
+% \umlunicompo[geometry=-|, arg=titi, mult=*, pos=1.7, stereo=vector]{D}{C}
+% \umlimport[geometry=|-, anchors=90 and 50, name=import]{sp2}{sp1}
+% \umlaggreg[arg=tutu, mult=1, pos=0.8, angle1=30, angle2=60, loopsize=2cm]{D}{D}
+% \umlinherit[geometry=-|]{D}{B}
+% \umlnote[x=2.5,y=-6, width=3cm]{B}{Je suis une note qui concerne la classe B}
+% \umlnote[x=7.5,y=-2]{import-2}{Je suis une note qui concerne la relation d'import}
+% \end{tikzpicture}
+% }
+% \end{center}
 
 \end{multicols*}
 \end{document}
