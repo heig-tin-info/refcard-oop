@@ -116,11 +116,15 @@ Cette carte de référence est une liste non exhaustive du paradigme Objet et de
 \section*{Concepts objets}
 \begin{description}
 \item[Objets] Les \emph{Objets} sont des instances de classes résidentes en mémoire. Ils possèdent un constructeur et un destructeur.
-\item[Class] Les classes sont des \emph{Modèles} d'\emph{Objets}. Ils sont définis par des attributs et des méthodes. 
+\item[Classe] Les classes sont des \emph{Modèles} d'\emph{Objets}. Ils sont définis par des attributs et des méthodes. 
 \item[Héritage] Les classes peuvent hériter d'une autre classe et ainsi se spécialiser.
 \item[Polymorphisme] Une classe parente peut être substituée par une classe enfant et ainsi le comportement de l'objet est généralisé.
 \item[Abstraction] Offre une abstraction des détails d'implémentation par la description d'interfaces et de comportements. 
-\item[Encapsulation] Permet de regrouper les données avec des routines qui en permettent la manipulation. Elle permet de modifier les structures de données internes sans modifier l'interface de celle-ci. 
+\item[Encapsulation] Permet de regrouper les données avec des routines qui en permettent la manipulation. Elle permet de modifier les structures de données internes sans modifier l'interface de celle-ci.
+\item[Interface] Contrat définissant un ensemble de méthodes qu'une classe doit implémenter.
+\item[Classe abstraite] Classe qui ne peut être instanciée, contient au moins une méthode virtuelle pure.
+\item[Cohésion] Mesure à quel point les éléments d'une classe collaborent pour une responsabilité unique.
+\item[Couplage] Degré d'interdépendance entre les classes (faible couplage souhaitable).
 \end{description}
 
 \section*{Modificateurs d'accès}
@@ -130,34 +134,71 @@ Cette carte de référence est une liste non exhaustive du paradigme Objet et de
 \textbf{protected} & Accessible depuis la classe et ses classes dérivées \\
 \end{tabularx}
 
-\section*{Méthodes spéciales}
+\section*{Méthodes et concepts spéciaux}
 \begin{description}
 \item[Constructeur] Initialise un objet lors de sa création
 \item[Destructeur] Nettoie les ressources lors de la destruction (\texttt{\textasciitilde{}})
 \item[virtual] Permet le polymorphisme dynamique
+\item[= 0] Méthode virtuelle pure (classe abstraite)
 \item[override] Indique qu'une méthode redéfinit une méthode virtuelle
 \item[final] Empêche la redéfinition d'une méthode ou l'héritage d'une classe
 \item[const] Méthode qui ne modifie pas l'état de l'objet
+\item[static] Méthode/attribut appartenant à la classe, pas à l'instance
+\item[friend] Permet l'accès aux membres privés depuis l'extérieur
+\item[Surcharge] Plusieurs méthodes avec le même nom mais paramètres différents
+\item[Templates] Généricité permettant de créer des classes/fonctions paramétrées
+\end{description}
+
+\section*{Types de polymorphisme}
+\begin{description}
+\item[Adhoc] Surcharge d'opérateurs et de fonctions
+\item[Paramétré] Templates et généricité
+\item[Inclusion] Héritage et méthodes virtuelles
+\item[Liaison statique] Résolution à la compilation
+\item[Liaison dynamique] Résolution à l'exécution (vtable)
+\item[Covariance] Type de retour plus spécifique dans classe dérivée
+\item[Contravariance] Paramètre plus général dans classe dérivée
 \end{description}
 
 \section*{Syntaxe C++ de base}
 \begin{lstlisting}[language=C++]
-class Animal {
+// Interface pure
+class IAnimal {
+public:
+    virtual ~IAnimal() = default;
+    virtual void crier() const = 0;
+    virtual void manger() = 0;
+};
+
+// Classe abstraite
+class Animal : public IAnimal {
 private:
     string nom;
 protected:
     int age;
 public:
-    Animal(string n) : nom(n) {}
+    Animal(string n) : nom(n), age(0) {}
     virtual ~Animal() {}
-    virtual void crier() const = 0; // pure virtual
     string getNom() const { return nom; }
+    // Surcharge operateur
+    friend ostream& operator<<(ostream& os, const Animal& a);
+};
+
+// Template de classe
+template<typename T>
+class Container {
+private:
+    vector<T> items;
+public:
+    void add(const T& item) { items.push_back(item); }
+    T& get(size_t index) { return items[index]; }
 };
 
 class Chat : public Animal {
 public:
     Chat(string n) : Animal(n) {}
     void crier() const override { cout << "Miaou"; }
+    void manger() override { cout << "Croquettes"; }
 };
 \end{lstlisting}
 
@@ -200,21 +241,61 @@ public:
 \end{tikzpicture} & Implémentation/Réalisation \\
 \end{tabularx}
 
+\section*{Gestion d'erreurs OOP}
+\begin{description}
+\item[Exception] Objet lancé en cas d'erreur, interrompt l'exécution normale
+\item[try-catch] Bloc de gestion des exceptions
+\item[throw] Lance une exception
+\item[RAII] Resource Acquisition Is Initialization - gestion automatique des ressources
+\item[std::exception] Classe de base pour les exceptions standard
+\item[Exception safety] Garanties sur l'état des objets en cas d'exception
+\end{description}
+
 \section*{Principes modernes}
 \begin{description}
 \item[RAII] Resource Acquisition Is Initialization - acquérir les ressources dans le constructeur, les libérer dans le destructeur
 \item[Rule of 3/5/0] Si une classe définit destructeur, constructeur de copie ou opérateur d'assignation, elle doit probablement définir les trois (ou cinq avec move)
 \item[Has-a vs Is-a] Composition (Has-a) souvent préférable à l'héritage (Is-a) pour la flexibilité
-\item[Smart pointers] \texttt{unique\_ptr}, \texttt{shared\_ptr} pour la gestion automatique de la mémoire
+\item[Smart pointers] \texttt{unique\_ptr}, \texttt{shared\_ptr}, \texttt{weak\_ptr} pour la gestion automatique de la mémoire
+\item[Move semantics] Optimisation des transferts de ressources (C++11)
+\item[auto] Déduction automatique de type
+\item[Lambda] Fonctions anonymes et closures
+\item[Range-based for] Itération simplifiée sur conteneurs
 \end{description}
 
 \section*{Design Patterns essentiels}
 \begin{description}
 \item[Singleton] Une seule instance de classe, accès global contrôlé
 \item[Factory] Création d'objets sans exposer la logique d'instanciation
+\item[Abstract Factory] Familles d'objets liés sans spécifier leurs classes
 \item[Observer] Notification automatique des changements d'état
+\item[Strategy] Encapsule des algorithmes et permet leur interchangeabilité
+\item[Template Method] Définit le squelette d'un algorithme, sous-classes implémentent les étapes
+\item[Decorator] Attache dynamiquement des responsabilités supplémentaires
+\item[Command] Encapsule une requête comme un objet
+\item[Adapter] Permet à des classes incompatibles de collaborer
+\item[Facade] Interface simplifiée pour un sous-système complexe
 \end{description}
 
+\section*{Concepts avancés}
+\begin{description}
+\item[Inversion de contrôle] Le contrôle est transféré à un framework externe
+\item[Injection de dépendance] Fourniture des dépendances depuis l'extérieur
+\item[Composition over inheritance] Préférer la composition à l'héritage
+\item[Law of Demeter] Un objet ne devrait communiquer qu'avec ses "amis" immédiats
+\item[GRASP] Guidelines pour l'attribution des responsabilités (General Responsibility Assignment Software Patterns)
+\item[Tell don't ask] Dire aux objets ce qu'ils doivent faire plutôt que demander leur état
+\end{description}
+
+\section*{Test et qualité OOP}
+\begin{description}
+\item[Unit testing] Test d'une classe ou méthode isolée
+\item[Mock objects] Objets simulés pour isoler les tests
+\item[Test fixtures] Environnement de test standardisé
+\item[TDD] Test-Driven Development - écrire les tests avant le code
+\item[Refactoring] Amélioration du code sans changer le comportement
+\item[Code coverage] Mesure du pourcentage de code testé
+\end{description}
 
 \section*{Modèle de classes}
 \begin{center}
