@@ -117,15 +117,7 @@ Cette carte de référence est une liste non exhaustive du paradigme Objet et de
 \item[D] \emph{Inversion des dépendances}. Il faut dépendre des abstractions, pas des implémentations.
 \end{description}
 
-\section*{RAII}
-Le principe RAII (\emph{Resource Acquisition Is Initialization}) en C++ consiste à lier la durée de vie des ressources (mémoire, fichiers, connexions réseau, etc.) à la durée de vie des objets. Ainsi, les ressources sont acquises lors de la création de l'objet (dans le constructeur) sont libérées lors de la destruction de l'objet (dans le destructeur).
 
-\begin{lstlisting}[language=C++]
-class Resource {
-public:
-    Resource() { /* Acquisition de la ressource */ }
-    ~Resource() { /* Libération de la ressource */ } };
-\end{lstlisting}
 
 \section*{Paradigme orienté-objet}
 \begin{description}
@@ -203,26 +195,22 @@ public:
 
 \section*{Interface}
 \begin{lstlisting}[language=C++]
-class IAnimal { // Interface pure
-public:
+struct IAnimal { // Interface pure
     virtual ~IAnimal() = default;
     virtual void crier() const = 0;
     virtual void manger() = 0;
 };
-
 class Animal : public IAnimal { // Classe abstraite
     string nom;
-protected:
+  protected:
     int age;
-public:
+  public:
     Animal(string n) : nom(n), age(0) {}
     virtual ~Animal() {}
     string getNom() const { return nom; }
     friend ostream& operator<<(ostream& os, const Animal& a);
 };
-
-class Chat : public Animal {
-public:
+struct Chat : public Animal {
     Chat(string n) : Animal(n) {}
     void crier() const override { cout << "Miaou"; }
     void manger() override { cout << "Croquettes"; }
@@ -233,14 +221,13 @@ public:
 \begin{lstlisting}[language=C++]
 template<typename T>
 class Container {
-private:
     vector<T> items;
-public:
+  public:
     void add(const T& item) { items.push_back(item); }
     T& get(size_t index) { return items[index]; }
     template<typename U>
-    void addConverted(const U& item) { 
-        items.push_back(static_cast<T>(item)); 
+    void addConverted(const U& item) {
+        items.push_back(static_cast<T>(item));
     }
 };
 // Usage: Container<int> intContainer;
@@ -248,8 +235,7 @@ public:
 
 \subsection*{Factory Pattern}
 \begin{lstlisting}[language=C++]
-class AnimalFactory {
-public:
+struct AnimalFactory {
     static unique_ptr<Animal> create(const string& type) {
         if (type == "chat") return make_unique<Chat>();
         if (type == "chien") return make_unique<Chien>();
@@ -261,11 +247,10 @@ public:
 \subsection*{Singleton Pattern}
 \begin{lstlisting}[language=C++]
 class Singleton {
-private:
     Singleton() = default;
     static Singleton* instance;
     static mutex mtx;
-public:
+  public:
     static Singleton& getInstance() {
         lock_guard<mutex> lock(mtx);
         if (!instance) {
@@ -275,15 +260,7 @@ public:
     }
     Singleton(const Singleton&) = delete;
     Singleton& operator=(const Singleton&) = delete;
-};
-
-% class Chat : public Animal {
-% public:
-%     Chat(string n) : Animal(n) {}
-%     void crier() const override { cout << "Miaou"; }
-%     void manger() override { cout << "Croquettes"; }
-% };
-% \end{lstlisting}
+}; \end{lstlisting}
 
 \section*{Relations UML}
 \begin{tabularx}{\columnwidth}{lX}
@@ -363,6 +340,15 @@ public:
 \item[RTTI] Run-Time Type Information
 \end{description}
 
+\subsection*{RAII}
+
+\begin{lstlisting}[language=C++]
+class Resource {
+public:
+    Resource() { /* Acquisition de la ressource */ }
+    ~Resource() { /* Libération de la ressource */ } };
+\end{lstlisting}
+
 \section*{Généricité et Templates}
 \begin{description}
 \item[Template de classe] Classe paramétrée par types
@@ -386,7 +372,7 @@ public:
 \item[Prototype] Clonage d'objets existants
 \item[Observer] Notification automatique des changements d'état
 \item[Strategy] Encapsule des algorithmes et permet leur interchangeabilité
-\item[Template Method] Définit le squelette d'un algorithme, sous-classes implémentent les étapes
+\item[Template Method] Définit le squelette d'un algorithme
 \item[Decorator] Attache dynamiquement des responsabilités supplémentaires
 \item[Command] Encapsule une requête comme un objet
 \item[Adapter] Permet à des classes incompatibles de collaborer
@@ -436,27 +422,27 @@ class Context {
 \item[Tell don't ask] Dire aux objets ce qu'ils doivent faire plutôt que demander leur état
 \end{description}
 
-\section*{Gestion mémoire multi-langages}
-\begin{description}
-\item[C++] Gestion manuelle + smart pointers, destructeurs automatiques
-\item[Java/C\#] Garbage collection automatique, finalizers optionnels
-\item[Python] Reference counting + cycle detection, \texttt{\_\_del\_\_}
-\item[Rust] Ownership system, borrow checker, drop traits
-\item[Stack vs Heap] Variables locales vs objets dynamiques
-\item[Memory leaks] Références circulaires, oubli de libération
-\end{description}
+% \section*{Gestion mémoire multi-langages}
+% \begin{description}
+% \item[C++] Gestion manuelle + smart pointers, destructeurs automatiques
+% \item[Java/C\#] Garbage collection automatique, finalizers optionnels
+% \item[Python] Reference counting + cycle detection, \texttt{\_\_del\_\_}
+% \item[Rust] Ownership system, borrow checker, drop traits
+% \item[Stack vs Heap] Variables locales vs objets dynamiques
+% \item[Memory leaks] Références circulaires, oubli de libération
+% \end{description}
 
-\section*{Syntaxe cross-language}
-\begin{description}
-\item[Classe C++] \texttt{class MyClass \{ public: void method(); \};}
-\item[Classe Java] \texttt{public class MyClass \{ public void method() \{\} \}}
-\item[Classe C\#] \texttt{public class MyClass \{ public void Method() \{\} \}}
-\item[Classe Python] \texttt{class MyClass: def method(self): pass}
-\item[Héritage C++] \texttt{class Child : public Parent}
-\item[Héritage Java] \texttt{class Child extends Parent}
-\item[Interface Java] \texttt{interface IMyInterface \{ void method(); \}}
-\item[Abstract C\#] \texttt{abstract class MyClass \{ abstract void Method(); \}}
-\end{description}
+% \section*{Syntaxe cross-language}
+% \begin{description}
+% \item[Classe C++] \texttt{class MyClass \{ public: void method(); \};}
+% \item[Classe Java] \texttt{public class MyClass \{ public void method() \{\} \}}
+% \item[Classe C\#] \texttt{public class MyClass \{ public void Method() \{\} \}}
+% \item[Classe Python] \texttt{class MyClass: def method(self): pass}
+% \item[Héritage C++] \texttt{class Child : public Parent}
+% \item[Héritage Java] \texttt{class Child extends Parent}
+% \item[Interface Java] \texttt{interface IMyInterface \{ void method(); \}}
+% \item[Abstract C\#] \texttt{abstract class MyClass \{ abstract void Method(); \}}
+% \end{description}
 
 \section*{Test et qualité OOP}
 \begin{description}
@@ -493,16 +479,16 @@ class Context {
 \item[Stream API] Traitement fonctionnel de collections
 \end{description}
 
-\section*{Concurrence et OOP}
-\begin{description}
-\item[Thread safety] Protection contre accès concurrent
-\item[Immutable objects] Objets sûrs par design
-\item[Monitor pattern] Synchronisation au niveau objet
-\item[Producer-Consumer] Pattern de communication entre threads
-\item[Actor model] Objets communiquant par messages
-\item[Lock-free] Structures sans verrous explicites
-\item[Atomic operations] Opérations indivisibles
-\end{description}
+% \section*{Concurrence et OOP}
+% \begin{description}
+% \item[Thread safety] Protection contre accès concurrent
+% \item[Immutable objects] Objets sûrs par design
+% \item[Monitor pattern] Synchronisation au niveau objet
+% \item[Producer-Consumer] Pattern de communication entre threads
+% \item[Actor model] Objets communiquant par messages
+% \item[Lock-free] Structures sans verrous explicites
+% \item[Atomic operations] Opérations indivisibles
+% \end{description}
 
 \section*{Développement moderne}
 \begin{description}
@@ -548,17 +534,12 @@ Le CRTP (Curiously Recurring Template Pattern) est un idiome de programmation en
 
 \begin{lstlisting}[language=C++]
 template <typename Derived>
-class Base {
-public:
+struct Base {
     void interface() {
-        static_cast<Derived*>(this)->implementation();
-    }
-    void implementation() { /* Comportement par défaut */ }
-};
-class Derived : public Base<Derived> {
-public:
-    void implementation() { /* Comportement spécifique */ }
-};
+        static_cast<Derived*>(this)->implementation(); }
+    void implementation() { /* Comportement par défaut */ } };
+struct Derived : public Base<Derived> {
+    void implementation() { /* Comportement spécifique */ } };
 \end{lstlisting}
 
 \section*{PIMPLE}
@@ -573,10 +554,8 @@ public:
   void publicMethod();
 };
 // Fichier .cpp
-class MyClass::Impl {
-public:
-  void privateMethod() { /* ... */ }
-};
+struct MyClass::Impl {
+  void privateMethod() { /* ... */ } };
 void MyClass::publicMethod() {
   pImpl->privateMethod(); // Utilisation de la méthode privée
 }
