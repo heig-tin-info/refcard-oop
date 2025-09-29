@@ -220,16 +220,62 @@ public:
     string getNom() const { return nom; }
     friend ostream& operator<<(ostream& os, const Animal& a);
 };
+
+class Chat : public Animal {
+public:
+    Chat(string n) : Animal(n) {}
+    void crier() const override { cout << "Miaou"; }
+    void manger() override { cout << "Croquettes"; }
+};
 \end{lstlisting}
-% // Template de classe
-% template<typename T>
-% class Container {
-% private:
-%     vector<T> items;
-% public:
-%     void add(const T& item) { items.push_back(item); }
-%     T& get(size_t index) { return items[index]; }
-% };
+
+\subsection*{Template de classe}
+\begin{lstlisting}[language=C++]
+template<typename T>
+class Container {
+private:
+    vector<T> items;
+public:
+    void add(const T& item) { items.push_back(item); }
+    T& get(size_t index) { return items[index]; }
+    template<typename U>
+    void addConverted(const U& item) { 
+        items.push_back(static_cast<T>(item)); 
+    }
+};
+// Usage: Container<int> intContainer;
+\end{lstlisting}
+
+\subsection*{Factory Pattern}
+\begin{lstlisting}[language=C++]
+class AnimalFactory {
+public:
+    static unique_ptr<Animal> create(const string& type) {
+        if (type == "chat") return make_unique<Chat>();
+        if (type == "chien") return make_unique<Chien>();
+        return nullptr;
+    }
+};
+\end{lstlisting}
+
+\subsection*{Singleton Pattern}
+\begin{lstlisting}[language=C++]
+class Singleton {
+private:
+    Singleton() = default;
+    static Singleton* instance;
+    static mutex mtx;
+public:
+    static Singleton& getInstance() {
+        lock_guard<mutex> lock(mtx);
+        if (!instance) {
+            instance = new Singleton();
+        }
+        return *instance;
+    }
+    Singleton(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
+};
 
 % class Chat : public Animal {
 % public:
@@ -285,6 +331,20 @@ public:
 \item[throw] Lance une exception
 \item[std::exception] Classe de base pour les exceptions standard
 \item[Exception safety] Garanties sur l'état des objets en cas d'exception
+\item[RAII exceptions] Les destructeurs libèrent automatiquement les ressources
+\item[Exception hierarchy] Hiérarchie d'exceptions spécialisées
+\item[Finally pattern] Nettoyage garanti (using/with en C\#/Python)
+\end{description}
+
+\section*{Métriques et qualité}
+\begin{description}
+\item[Complexité cyclomatique] Mesure de la complexité du code
+\item[Couplage afférent/efférent] Dépendances entrantes/sortantes
+\item[LCOM] Lack of Cohesion of Methods - mesure de cohésion
+\item[Instabilité] Ratio de dépendances sortantes sur totales
+\item[Distance] Équilibre entre abstraction et instabilité
+\item[Technical debt] Dette technique accumulée
+\item[Code smells] Indicateurs de problèmes de conception
 \end{description}
 
 \section*{Principes modernes}
@@ -297,6 +357,24 @@ public:
 \item[auto] Déduction automatique de type
 \item[Lambda] Fonctions anonymes et closures
 \item[Range-based for] Itération simplifiée sur conteneurs
+\item[Concepts] Contraintes sur les templates (C++20)
+\item[Modules] Nouvelle unité de compilation (C++20)
+\item[Constexpr] Évaluation à la compilation
+\item[RTTI] Run-Time Type Information
+\end{description}
+
+\section*{Généricité et Templates}
+\begin{description}
+\item[Template de classe] Classe paramétrée par types
+\item[Template de fonction] Fonction générique
+\item[Spécialisation] Version spécifique pour certains types
+\item[SFINAE] Substitution Failure Is Not An Error
+\item[Type traits] Métaprogrammation sur les types
+\item[Variadic templates] Nombre variable de paramètres
+\item[Perfect forwarding] Préservation de la catégorie de valeur
+\item[Java Generics] \texttt{List<T>}, effacement de type
+\item[C\# Generics] Génériques avec réification
+\item[Python Generics] \texttt{List[T]}, typing hints
 \end{description}
 
 \section*{Design Patterns essentiels}
@@ -304,6 +382,8 @@ public:
 \item[Singleton] Une seule instance de classe, accès global contrôlé
 \item[Factory] Création d'objets sans exposer la logique d'instanciation
 \item[Abstract Factory] Familles d'objets liés sans spécifier leurs classes
+\item[Builder] Construction étape par étape d'objets complexes
+\item[Prototype] Clonage d'objets existants
 \item[Observer] Notification automatique des changements d'état
 \item[Strategy] Encapsule des algorithmes et permet leur interchangeabilité
 \item[Template Method] Définit le squelette d'un algorithme, sous-classes implémentent les étapes
@@ -311,6 +391,10 @@ public:
 \item[Command] Encapsule une requête comme un objet
 \item[Adapter] Permet à des classes incompatibles de collaborer
 \item[Facade] Interface simplifiée pour un sous-système complexe
+\item[Proxy] Contrôle l'accès à un autre objet
+\item[Chain of Responsibility] Chaîne de gestionnaires pour traiter les requêtes
+\item[State] Modifie le comportement selon l'état interne
+\item[Visitor] Sépare algorithmes et structure d'objets
 \end{description}
 
 \subsection*{Observer}
@@ -352,20 +436,112 @@ class Context {
 \item[Tell don't ask] Dire aux objets ce qu'ils doivent faire plutôt que demander leur état
 \end{description}
 
+\section*{Gestion mémoire multi-langages}
+\begin{description}
+\item[C++] Gestion manuelle + smart pointers, destructeurs automatiques
+\item[Java/C\#] Garbage collection automatique, finalizers optionnels
+\item[Python] Reference counting + cycle detection, \texttt{\_\_del\_\_}
+\item[Rust] Ownership system, borrow checker, drop traits
+\item[Stack vs Heap] Variables locales vs objets dynamiques
+\item[Memory leaks] Références circulaires, oubli de libération
+\end{description}
+
+\section*{Syntaxe cross-language}
+\begin{description}
+\item[Classe C++] \texttt{class MyClass \{ public: void method(); \};}
+\item[Classe Java] \texttt{public class MyClass \{ public void method() \{\} \}}
+\item[Classe C\#] \texttt{public class MyClass \{ public void Method() \{\} \}}
+\item[Classe Python] \texttt{class MyClass: def method(self): pass}
+\item[Héritage C++] \texttt{class Child : public Parent}
+\item[Héritage Java] \texttt{class Child extends Parent}
+\item[Interface Java] \texttt{interface IMyInterface \{ void method(); \}}
+\item[Abstract C\#] \texttt{abstract class MyClass \{ abstract void Method(); \}}
+\end{description}
+
 \section*{Test et qualité OOP}
 \begin{description}
 \item[Unit testing] Test d'une classe ou méthode isolée
 \item[Mock objects] Objets simulés pour isoler les tests
 \item[Test fixtures] Environnement de test standardisé
 \item[TDD] Test-Driven Development - écrire les tests avant le code
+\item[BDD] Behavior-Driven Development - spécifications comportementales
 \item[Refactoring] Amélioration du code sans changer le comportement
 \item[Code coverage] Mesure du pourcentage de code testé
+\item[Integration testing] Tests d'interaction entre classes
+\end{description}
+
+\section*{Patterns architecturaux}
+\begin{description}
+\item[MVC] Model-View-Controller - séparation données/présentation/logique
+\item[MVP] Model-View-Presenter - contrôleur plus actif
+\item[MVVM] Model-View-ViewModel - binding bidirectionnel
+\item[Repository] Encapsule logique d'accès aux données
+\item[Unit of Work] Groupe d'opérations transactionnelles
+\item[Service Layer] Couche de services métier
+\item[Domain Model] Objets métier avec logique intégrée
+\item[Active Record] Objet = enregistrement base de données
+\end{description}
+
+\section*{OOP et programmation fonctionnelle}
+\begin{description}
+\item[Immutabilité] Objets non modifiables après création
+\item[Pure functions] Méthodes sans effets de bord
+\item[Higher-order functions] Fonctions comme paramètres/retour
+\item[Monads] Encapsulation de calculs avec contexte
+\item[Functors] Objets applicables comme fonctions
+\item[Lambda expressions] Fonctions anonymes en OOP
+\item[Stream API] Traitement fonctionnel de collections
+\end{description}
+
+\section*{Concurrence et OOP}
+\begin{description}
+\item[Thread safety] Protection contre accès concurrent
+\item[Immutable objects] Objets sûrs par design
+\item[Monitor pattern] Synchronisation au niveau objet
+\item[Producer-Consumer] Pattern de communication entre threads
+\item[Actor model] Objets communiquant par messages
+\item[Lock-free] Structures sans verrous explicites
+\item[Atomic operations] Opérations indivisibles
+\end{description}
+
+\section*{Développement moderne}
+\begin{description}
+\item[Clean Code] Code lisible, maintenable et expressif
+\item[Domain-Driven Design] Modélisation orientée métier
+\item[Hexagonal Architecture] Architecture en couches découplées
+\item[Microservices] Architecture distribuée en services
+\item[Event Sourcing] Stockage des événements plutôt que de l'état
+\item[CQRS] Command Query Responsibility Segregation
+\item[Reactive Programming] Programmation orientée flux de données
+\item[DevOps integration] Intégration continue et déploiement
+\end{description}
+
+\section*{Anti-patterns et erreurs courantes}
+\begin{description}
+\item[God Object] Classe qui fait trop de choses
+\item[Anemic Domain Model] Objets sans logique métier
+\item[Circular Dependencies] Dépendances circulaires entre classes
+\item[Inappropriate Intimacy] Classes trop couplées
+\item[Feature Envy] Méthode utilisant plus une autre classe
+\item[Data Class] Classe contenant seulement des données
+\item[Large Class] Classe avec trop de responsabilités
+\item[Long Parameter List] Trop de paramètres dans les méthodes
+\item[Duplicate Code] Code répété dans plusieurs classes
+\item[Dead Code] Code non utilisé mais maintenu
 \end{description}
 
 \section*{SFINAE}
 SFINAE (Substitution Failure Is Not An Error) est un principe en C++ qui permet de sélectionner des surcharges de fonctions ou des spécialisations de templates en fonction de la validité des types substitués. Si la substitution d'un type dans une expression de template échoue, cela n'est pas considéré comme une erreur de compilation, mais plutôt comme une indication que cette surcharge ou spécialisation n'est pas applicable. Cela permet de créer des fonctions ou des classes génériques qui s'adaptent automatiquement aux types fournis, en excluant les options non valides.
 
-Exemple...
+\begin{lstlisting}[language=C++]
+template<typename T>
+typename enable_if<is_integral<T>::value, T>::type
+process(T value) { return value * 2; }
+
+template<typename T>
+typename enable_if<is_floating_point<T>::value, T>::type
+process(T value) { return value / 2.0; }
+\end{lstlisting}
 
 \section*{CRTP}
 Le CRTP (Curiously Recurring Template Pattern) est un idiome de programmation en C++ qui utilise des templates pour permettre à une classe dérivée de référencer sa propre classe de base.
@@ -377,11 +553,11 @@ public:
     void interface() {
         static_cast<Derived*>(this)->implementation();
     }
-    void implementation() { // Comportement par défaut}
+    void implementation() { /* Comportement par défaut */ }
 };
 class Derived : public Base<Derived> {
 public:
-    void implementation() { // Comportement spécifique }
+    void implementation() { /* Comportement spécifique */ }
 };
 \end{lstlisting}
 
