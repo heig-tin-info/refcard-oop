@@ -256,6 +256,26 @@ public:
         return nullptr;
     }
 };
+\end{lstlisting}
+
+\subsection*{Singleton Pattern}
+\begin{lstlisting}[language=C++]
+class Singleton {
+private:
+    Singleton() = default;
+    static Singleton* instance;
+    static mutex mtx;
+public:
+    static Singleton& getInstance() {
+        lock_guard<mutex> lock(mtx);
+        if (!instance) {
+            instance = new Singleton();
+        }
+        return *instance;
+    }
+    Singleton(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
+};
 
 % class Chat : public Animal {
 % public:
@@ -311,6 +331,20 @@ public:
 \item[throw] Lance une exception
 \item[std::exception] Classe de base pour les exceptions standard
 \item[Exception safety] Garanties sur l'état des objets en cas d'exception
+\item[RAII exceptions] Les destructeurs libèrent automatiquement les ressources
+\item[Exception hierarchy] Hiérarchie d'exceptions spécialisées
+\item[Finally pattern] Nettoyage garanti (using/with en C\#/Python)
+\end{description}
+
+\section*{Métriques et qualité}
+\begin{description}
+\item[Complexité cyclomatique] Mesure de la complexité du code
+\item[Couplage afférent/efférent] Dépendances entrantes/sortantes
+\item[LCOM] Lack of Cohesion of Methods - mesure de cohésion
+\item[Instabilité] Ratio de dépendances sortantes sur totales
+\item[Distance] Équilibre entre abstraction et instabilité
+\item[Technical debt] Dette technique accumulée
+\item[Code smells] Indicateurs de problèmes de conception
 \end{description}
 
 \section*{Principes modernes}
@@ -468,6 +502,18 @@ class Context {
 \item[Actor model] Objets communiquant par messages
 \item[Lock-free] Structures sans verrous explicites
 \item[Atomic operations] Opérations indivisibles
+\end{description}
+
+\section*{Développement moderne}
+\begin{description}
+\item[Clean Code] Code lisible, maintenable et expressif
+\item[Domain-Driven Design] Modélisation orientée métier
+\item[Hexagonal Architecture] Architecture en couches découplées
+\item[Microservices] Architecture distribuée en services
+\item[Event Sourcing] Stockage des événements plutôt que de l'état
+\item[CQRS] Command Query Responsibility Segregation
+\item[Reactive Programming] Programmation orientée flux de données
+\item[DevOps integration] Intégration continue et déploiement
 \end{description}
 
 \section*{Anti-patterns et erreurs courantes}
