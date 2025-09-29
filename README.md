@@ -1,6 +1,6 @@
 # Carte de référence Programmation Orientée Objets C++20 pour étudiants
 
-![.github/workflows/ci.yml](https://github.com/heig-tin-info/refcard-oop/workflows/.github/workflows/ci.yml/badge.svg)
+![CI](https://github.com/heig-tin-info/refcard-oop/actions/workflows/ci.yml/badge.svg?branch=master)
 
 Cette carte de référence est destinée à accompagner l'étudiant durant ses études d'ingénieur. Elle couvre les concepts fondamentaux de la programmation orientée objet en C++20, incluant les principes SOLID, les design patterns essentiels, et les bonnes pratiques modernes. Elle est en principe autorisée durant les travaux écrits et examens ; à confirmer par le professeur en charge de dispenser la matière.
 
@@ -8,7 +8,7 @@ Cette carte de référence est destinée à accompagner l'étudiant durant ses �
 
 La carte de référence est une feuille A4 recto-verso supposément imprimée sur du papier cartonné verte :
 
-[![Preview](preview.png)](https://github.com/heig-tin-info/refcard-oop/releases/latest/download/refcard-oop.pdf)
+[![Preview]([preview.png](https://github.com/heig-tin-info/refcard-oop/releases/latest/download/preview.png))](https://github.com/heig-tin-info/refcard-oop/releases/latest/download/refcard-oop.pdf)
 
 ## Build
 

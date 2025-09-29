@@ -1,7 +1,8 @@
-\documentclass[9pt]{extarticle}
+\documentclass{article}
 \usepackage[a4paper,landscape,margin=5mm]{geometry}
 \usepackage[french]{babel}
 \usepackage[dvipsnames]{xcolor}
+\usepackage[fontsize=6.5pt]{scrextend}
 \usepackage{fontspec}
 \usepackage{multicol}
 \usepackage{tabularx,booktabs}
@@ -10,7 +11,6 @@
 \usepackage{listings}
 \usepackage{multirow}
 \usepackage{titlesec}
-% \usepackage{fullpage}
 \usepackage{tikz-uml}
 \usepackage{makecell}
 
@@ -57,10 +57,7 @@
 % Configuration
 \renewcommand{\familydefault}{\sfdefault}
 
-\sectionfont{\fontsize{12}{15}\selectfont}
-\subsectionfont{\fontsize{10}{12}\selectfont}
-
-\allsectionsfont{\sffamily\underline}
+\setmonofont{Source Code Pro}
 
 % No pages numbering
 \pagenumbering{gobble}
@@ -91,13 +88,12 @@
   \begin{tabularx}{\columnwidth}{@{}lX}
     \raisebox{-\totalheight}{\includegraphics[width=1cm]{assets/heig-vd-black.pdf}} &
 \begin{center}
-  {\Large \bf Carte de référence Programmation Objet C++20} \\
+  {\Large \bf Carte de référence Programmation Objet} \\
   version \revision \ -- \revisiondate \\
 \end{center}
 \end{tabularx}
 
 Cette carte de référence est une liste non exhaustive du paradigme Objet et de ses notions fondamentales
-
 
 \hrule
 
@@ -111,7 +107,14 @@ Cette carte de référence est une liste non exhaustive du paradigme Objet et de
 \end{description}
 
 \section*{RAII}
-Le principe RAII (\emph{Resource Acquisition Is Initialization}) consiste à lier la durée de vie des ressources (mémoire, fichiers, connexions réseau, etc.) à la durée de vie des objets. Ainsi, les ressources sont acquises lors de la création de l'objet (dans le constructeur) sont libérées lors de la destruction de l'objet (dans le destructeur).
+Le principe RAII (\emph{Resource Acquisition Is Initialization}) en C++ consiste à lier la durée de vie des ressources (mémoire, fichiers, connexions réseau, etc.) à la durée de vie des objets. Ainsi, les ressources sont acquises lors de la création de l'objet (dans le constructeur) sont libérées lors de la destruction de l'objet (dans le destructeur).
+
+\begin{lstlisting}[language=C++]
+class Resource {
+public:
+    Resource() { /* Acquisition de la ressource */ }
+    ~Resource() { /* Libération de la ressource */ } };
+\end{lstlisting}
 
 \section*{Paradigme orienté-objet}
 \begin{description}
@@ -155,11 +158,11 @@ public:
 };
 \end{lstlisting}
 \section*{Modificateurs d'accès}
-\begin{tabularx}{\columnwidth}{lX}
-\textbf{public} & Accessible depuis l'extérieur de la classe \\
-\textbf{private} & Accessible uniquement depuis la classe elle-même \\
-\textbf{protected} & Accessible depuis la classe et ses classes dérivées
-\end{tabularx}
+\begin{description}
+\item[public] Accessible depuis l'extérieur de la classe \\
+\item[private] Accessible uniquement depuis la classe elle-même \\
+\item[protected] Accessible depuis la classe et ses classes dérivées
+\end{description}
 
 \section*{Méthodes et concepts spéciaux}
 \begin{description}
@@ -298,6 +301,35 @@ public:
 \item[Adapter] Permet à des classes incompatibles de collaborer
 \item[Facade] Interface simplifiée pour un sous-système complexe
 \end{description}
+
+\subsection*{Observer}
+\begin{lstlisting}[language=C++]
+struct IObserver {
+    virtual void update() = 0; };
+class Subject {
+    vector<IObserver*> observers;
+  public:
+    void attach(IObserver* obs) { observers.push_back(obs); }
+    void notify() { for (auto obs : observers) obs->update(); }
+};
+class ConcreteObserver : public IObserver {
+    void update() override { /* ... */ } };
+\end{lstlisting}
+
+\subsection*{Strategy}
+\begin{lstlisting}[language=C++]
+struct IStrategy {
+    virtual void execute() = 0; };
+struct ConcreteStrategyA : public IStrategy {
+    void execute() override { /* ... */ } };
+struct ConcreteStrategyB : public IStrategy {
+    void execute() override { /* ... */ } };
+class Context {
+    IStrategy* strategy;
+  public:
+    void setStrategy(IStrategy* s) { strategy = s; }
+    void perform() { strategy->execute(); } };
+\end{lstlisting}
 
 \section*{Concepts avancés}
 \begin{description}
