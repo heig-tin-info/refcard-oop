@@ -4,8 +4,6 @@ on:
   push:
     branches: [ master, main ]
     tags: [ 'v*' ]   # <— au lieu de on.create
-#  create:
-#    tags:          # ❌ supprime ça
 
 jobs:
   build:
